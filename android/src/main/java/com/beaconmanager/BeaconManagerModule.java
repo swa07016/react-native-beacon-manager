@@ -52,12 +52,11 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
   UserRssi comp = new UserRssi();
   private Handler handler = new Handler(Looper.getMainLooper());
 
-  // init을 먼저 호출하세요
+  // NOTE - init을 먼저 호출하세요
   @ReactMethod
   public void init(Promise promise) {
       initManager();
       initListener();
-//      initPermission();
       startService();
       promise.resolve("Success");
   }
@@ -66,7 +65,6 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
     mMinewBeaconManager = MinewBeaconManager.getInstance(getReactApplicationContext());
     //设置每10秒返回一次结果
 
-//    mMinewBeaconManager.setRangeInterval(1000);
   }
 
   private void initListener() {
@@ -76,59 +74,33 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
       public void onUpdateBluetoothState(BluetoothState state) {
         switch (state) {
           case BluetoothStatePowerOff:
-//            Toast.makeText(getApplicationContext(), "bluetooth off", Toast.LENGTH_SHORT).show();
+
             break;
           case BluetoothStatePowerOn:
-//            Toast.makeText(getApplicationContext(), "bluetooth on", Toast.LENGTH_SHORT).show();
+
             break;
         }
       }
 
       @Override
       public void onRangeBeacons(List<MinewBeacon> beacons) {
-        System.out.println("CALL ON RANGE");
         Log.e("test", "size=" + beacons.size());
         //获取周围设备的最新扫描数据
         setData(beacons);
-        Log.e("test", "SET BEACONLIST" + mMinewBeacons.size());
       }
 
       @Override
       public void onAppearBeacons(List<MinewBeacon> beacons) {
-        System.out.println("CALL ON APPEAR");
+
       }
 
       @Override
       public void onDisappearBeacons(List<MinewBeacon> beacons) {
-        System.out.println("CALL ON DISAPPEAR");
+
       }
     });
 
   }
-
-//  @RequiresApi(api = Build.VERSION_CODES.M)
-//  private void initPermission() {
-//    String[] requestPermissions;
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//      requestPermissions = new String[]{
-//        Manifest.permission.BLUETOOTH_SCAN,
-//        Manifest.permission.BLUETOOTH_CONNECT,
-//        Manifest.permission.ACCESS_COARSE_LOCATION,
-//        Manifest.permission.ACCESS_FINE_LOCATION
-//      };
-//
-//    } else {
-//      requestPermissions = new String[]{
-//        Manifest.permission.ACCESS_COARSE_LOCATION,
-//        Manifest.permission.ACCESS_FINE_LOCATION
-//      };
-//
-//    }
-//
-//    ActivityCompat.requestPermissions(this,
-//      requestPermissions, Manifest.permission.REQUEST_FINE_LOCATION);
-//
-//  }
 
   private void startService() {
     mMinewBeaconManager.startService();
@@ -137,23 +109,37 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void startScan(Promise promise) {
-    checkLocation();
-    checkBluetooth();
+    if (!hasPermissions()) {
+      promise.reject(new RuntimeException("Required permissions not granted"));
+      return;
+    }
 
     handler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        System.out.println("START SCAN!");
         mMinewBeaconManager.startScan();
       }
-      // Runnable 익명 클래스의 끝에 대한 중괄호 추가
     }, 0);
-    // handler.postDelayed() 메소드 호출의 끝에 대한 중괄호 추가
 
     promise.resolve("Success");
-// startScan 메소드의 끝에 대한 중괄호 추가
   }
 
+  private boolean hasPermissions() {
+    String[] permissions = {
+      Manifest.permission.ACCESS_FINE_LOCATION,
+      Manifest.permission.ACCESS_COARSE_LOCATION,
+      Manifest.permission.BLUETOOTH_SCAN,
+      Manifest.permission.BLUETOOTH_CONNECT
+    };
+
+    for (String permission : permissions) {
+      if (ContextCompat.checkSelfPermission(getReactApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
 
   @ReactMethod
@@ -164,33 +150,28 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getBeaconList(Promise promise) {
-    Log.e("test", "GET BEACONLIST" + mMinewBeacons.size());
-
     WritableArray beaconArray = Arguments.createArray();
 
-      for (MinewBeacon beacon : mMinewBeacons) {
-          WritableMap beaconMap = Arguments.createMap();
-          beaconMap.putString("name", beacon.getName());
-           beaconMap.putString("uuid", beacon.getUuid());
-           beaconMap.putBoolean("connectable", beacon.isConnectable());
-        beaconMap.putBoolean("inRange", beacon.isInRange());
-           beaconMap.putString("major", beacon.getMajor());
-           beaconMap.putString("minor", beacon.getMinor());
-           beaconMap.putInt("rssi", beacon.getRssi());
-           beaconMap.putInt("battery", beacon.getBattery());
-        beaconMap.putDouble("distance", Float.valueOf(beacon.getDistance()).doubleValue());
-          beaconMap.putString("txPower", beacon.getTxpower());
-        beaconMap.putString("deviceId", beacon.getDeviceId());
-        beaconMap.putString("macAddress", beacon.getMacAddress());
+    for (MinewBeacon beacon : mMinewBeacons) {
+      WritableMap beaconMap = Arguments.createMap();
+      beaconMap.putString("name", beacon.getName());
+      beaconMap.putString("uuid", beacon.getUuid());
+      beaconMap.putBoolean("connectable", beacon.isConnectable());
+      beaconMap.putBoolean("inRange", beacon.isInRange());
+      beaconMap.putString("major", beacon.getMajor());
+      beaconMap.putString("minor", beacon.getMinor());
+      beaconMap.putInt("rssi", beacon.getRssi());
+      beaconMap.putInt("battery", beacon.getBattery());
+      beaconMap.putDouble("distance", Float.valueOf(beacon.getDistance()).doubleValue());
+      beaconMap.putString("txPower", beacon.getTxpower());
+      beaconMap.putString("deviceId", beacon.getDeviceId());
+      beaconMap.putString("macAddress", beacon.getMacAddress());
+      // 추가적인 필요한 필드를 여기에 넣어줍니다.
 
-          // 추가적인 필요한 필드를 여기에 넣어줍니다.
+      beaconArray.pushMap(beaconMap);
+    }
 
-          beaconArray.pushMap(beaconMap);
-      }
-
-    Log.e("test", "PROMISE BEACONSLIST : " + beaconArray.size());
-
-      promise.resolve(beaconArray);
+    promise.resolve(beaconArray);
   }
 
   private void checkBluetooth(){
