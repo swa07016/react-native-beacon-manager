@@ -47,12 +47,11 @@ android {
     }
   }
 
-  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+  compileSdkVersion 33
 
   defaultConfig {
-    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
-    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
-
+    minSdkVersion 21
+    targetSdkVersion 33
   }
 
   buildTypes {
@@ -82,5 +81,9 @@ dependencies {
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
+  // libs 폴더 내의 모든 .jar 파일을 포함시키는 구문
+  implementation 'org.greenrobot:eventbus:3.0.0'
+  implementation 'com.google.code.gson:gson:2.2.4'
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
