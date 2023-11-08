@@ -109,11 +109,6 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void startScan(Promise promise) {
-    if (!hasPermissions()) {
-      promise.reject(new RuntimeException("Required permissions not granted"));
-      return;
-    }
-
     handler.postDelayed(new Runnable() {
       @Override
       public void run() {
@@ -124,24 +119,6 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
     promise.resolve("Success");
   }
 
-  private boolean hasPermissions() {
-    String[] permissions = {
-      Manifest.permission.ACCESS_FINE_LOCATION,
-      Manifest.permission.ACCESS_COARSE_LOCATION,
-      Manifest.permission.BLUETOOTH_SCAN,
-      Manifest.permission.BLUETOOTH_CONNECT
-    };
-
-    for (String permission : permissions) {
-      if (ContextCompat.checkSelfPermission(getReactApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-
   @ReactMethod
   public void stopScan(Promise promise) {
     mMinewBeaconManager.stopScan();
@@ -149,7 +126,7 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getBeaconList(Promise promise) {
+  public void getBeaconListInRange(Promise promise) {
     WritableArray beaconArray = Arguments.createArray();
 
     for (MinewBeacon beacon : mMinewBeacons) {
@@ -174,49 +151,6 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
     promise.resolve(beaconArray);
   }
 
-  private void checkBluetooth(){
-      if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.BLUETOOTH_SCAN)
-              != PackageManager.PERMISSION_GRANTED) {
-          // Permission is not granted
-          ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.BLUETOOTH_SCAN},102);
-      }
-
-      if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT)
-              != PackageManager.PERMISSION_GRANTED) {
-          // Permission is not granted
-          ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.BLUETOOTH_CONNECT},103);
-      }
-
-
-    if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.BLUETOOTH_ADMIN)
-      != PackageManager.PERMISSION_GRANTED) {
-      // Permission is not granted
-      ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.BLUETOOTH_ADMIN},103);
-    }
-
-
-    if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.BLUETOOTH)
-      != PackageManager.PERMISSION_GRANTED) {
-      // Permission is not granted
-      ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.BLUETOOTH},103);
-    }
-
-  }
-
-  private void checkLocation(){
-      if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-              != PackageManager.PERMISSION_GRANTED) {
-          // Permission is not granted
-          ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},101);
-      }
-
-    if (ContextCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-      != PackageManager.PERMISSION_GRANTED) {
-      // Permission is not granted
-      ActivityCompat.requestPermissions(getCurrentActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},101);
-    }
-  }
-
   public BeaconManagerModule(ReactApplicationContext reactContext) {
     super(reactContext);
   }
@@ -230,11 +164,5 @@ public class BeaconManagerModule extends ReactContextBaseJavaModule {
   @NonNull
   public String getName() {
     return NAME;
-  }
-
-  // Example method
-  @ReactMethod
-  public void multiply(double a, double b, Promise promise) {
-    promise.resolve(a * b);
   }
 }

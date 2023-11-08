@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { multiply, getBeaconList, startScan, stopScan, init } from 'react-native-beacon-manager';
+import { getBeaconListInRange, startScan, requestBluetoothPermission, requestLocationPermission, stopScan, init } from 'react-native-beacon-manager';
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
@@ -10,19 +10,25 @@ export default function App() {
 
   React.useEffect(() => {
     init()
+      .then(() => requestBluetoothPermission())
+      .then(() => requestLocationPermission())
       .then(() => startScan());
   }, []);
 
+  const printBeaconList = (beaconArray : Array<object>) : void => {
+    console.log("BEACON ARRAY ( size=", beaconArray.length, ")");
+
+    beaconArray.forEach((beacon, index) => {
+      console.log(`Beacon ${index}:`, beacon);
+    });
+
+    console.log("---------------")
+  }
+
   const handleButtonClick = async () => {
     try {
-      const beaconArray = await getBeaconList();
-      console.log("BEACON ARRAY ( size=", beaconArray.length, ")");
-
-      beaconArray.forEach((beacon, index) => {
-        console.log(`Beacon ${index}:`, beacon);
-      });
-
-      console.log("---------------")
+      const beaconArray = await getBeaconListInRange();
+      printBeaconList(beaconArray);
       setBeaconList(beaconArray);
     } catch (error) {
       console.error('Error getting beacon list:', error);

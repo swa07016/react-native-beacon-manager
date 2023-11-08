@@ -17,13 +17,9 @@ const BeaconManager = NativeModules.BeaconManager
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return BeaconManager.multiply(a, b);
-}
-
-export function getBeaconList(): Promise<Array<object>> {
+export function getBeaconListInRange(): Promise<Array<object>> {
   return new Promise((resolve, reject) => {
-    BeaconManager.getBeaconList()
+    BeaconManager.getBeaconListInRange()
       .then((list) => {
         resolve(list);
       }).catch((error) => {
@@ -46,7 +42,7 @@ export function init() : Promise<any> {
   return BeaconManager.init();
 }
 
-async function requestLocationPermission() {
+export async function requestLocationPermission() {
   if (Platform.OS === 'android' && Platform.Version >= 23) {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -63,7 +59,7 @@ async function requestLocationPermission() {
   return true;
 }
 
-async function requestBluetoothPermission() {
+export async function requestBluetoothPermission() {
   if (Platform.OS === 'android' && Platform.Version >= 31) { // Android 12 and above
     const bluetoothScanGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
