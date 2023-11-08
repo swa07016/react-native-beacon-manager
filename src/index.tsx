@@ -17,28 +17,28 @@ const BeaconManager = NativeModules.BeaconManager
       }
     );
 
-export function getBeaconListInRange(): Promise<Array<object>> {
+export function getBeaconListInRange(): Promise<Array<Beacon>> {
   return new Promise((resolve, reject) => {
     BeaconManager.getBeaconListInRange()
       .then((list) => {
         resolve(list);
-      }).catch((error) => {
-      console.error("Failed to fetch beacon list", error);
-      reject(error);
-    });
+      })
+      .catch((error) => {
+        console.error('Failed to fetch beacon list', error);
+        reject(error);
+      });
   });
 }
 
-
-export function startScan() : Promise<any> {
+export function startScan(): Promise<any> {
   return checkPermissionsAndStartScan();
 }
 
-export function stopScan() : Promise<any> {
+export function stopScan(): Promise<any> {
   return BeaconManager.stopScan();
 }
 
-export function init() : Promise<any> {
+export function init(): Promise<any> {
   return BeaconManager.init();
 }
 
@@ -47,44 +47,47 @@ export async function requestLocationPermission() {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: "Location Permission",
-        message: "This app needs access to your location.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+        title: 'Location Permission',
+        message: 'This app needs access to your location.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
       }
     );
-    return (granted === PermissionsAndroid.RESULTS.GRANTED);
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
   }
   return true;
 }
 
 export async function requestBluetoothPermission() {
-  if (Platform.OS === 'android' && Platform.Version >= 31) { // Android 12 and above
+  if (Platform.OS === 'android' && Platform.Version >= 31) {
+    // Android 12 and above
     const bluetoothScanGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
       {
-        title: "Bluetooth Scan Permission",
-        message: "This app needs permission to scan for Bluetooth devices.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+        title: 'Bluetooth Scan Permission',
+        message: 'This app needs permission to scan for Bluetooth devices.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
       }
     );
 
     const bluetoothConnectGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       {
-        title: "Bluetooth Connect Permission",
-        message: "This app needs permission to connect to Bluetooth devices.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+        title: 'Bluetooth Connect Permission',
+        message: 'This app needs permission to connect to Bluetooth devices.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
       }
     );
 
-    return (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED &&
-      bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED);
+    return (
+      bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED &&
+      bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED
+    );
   }
   return true;
 }
@@ -104,4 +107,17 @@ export async function checkPermissionsAndStartScan() {
   }
 }
 
-
+export interface Beacon {
+  battery: number;
+  connectable: boolean;
+  deviceId: string | null;
+  distance: number;
+  inRange: boolean;
+  macAddress: string;
+  major: string;
+  minor: string;
+  name: string | null;
+  rssi: number;
+  txPower: string;
+  uuid: string;
+}
