@@ -51,11 +51,11 @@ export async function requestLocationPermission() {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: 'Location Permission',
-        message: 'This app needs access to your location.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
+        title: '위치 권한',
+        message: '이 앱은 위치에 대한 접근 권한이 필요합니다.',
+        buttonNeutral: '나중에 물어보기',
+        buttonNegative: '취소',
+        buttonPositive: '확인',
       }
     );
     return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -74,22 +74,22 @@ export async function requestBluetoothPermission() {
     const bluetoothScanGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
       {
-        title: 'Bluetooth Scan Permission',
-        message: 'This app needs permission to scan for Bluetooth devices.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
+        title: '블루투스 스캔 권한',
+        message: '이 앱은 Bluetooth 장치를 스캔하는 권한이 필요합니다.',
+        buttonNeutral: '나중에 물어보기',
+        buttonNegative: '취소',
+        buttonPositive: '확인',
       }
     );
 
     const bluetoothConnectGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       {
-        title: 'Bluetooth Connect Permission',
-        message: 'This app needs permission to connect to Bluetooth devices.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
+        title: '블루투스 연결 권한',
+        message: '이 앱은 Bluetooth 장치에 연결하는 권한이 필요합니다.',
+        buttonNeutral: '나중에 물어보기',
+        buttonNegative: '취소',
+        buttonPositive: '확인',
       }
     );
 
