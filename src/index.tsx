@@ -43,7 +43,11 @@ export function init(): Promise<any> {
 }
 
 export async function requestLocationPermission() {
-  if (Platform.OS === 'android' && Platform.Version >= 23) {
+  if (
+    Platform.OS === 'android' &&
+    Platform.Version >= 23 &&
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+  ) {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
@@ -60,7 +64,12 @@ export async function requestLocationPermission() {
 }
 
 export async function requestBluetoothPermission() {
-  if (Platform.OS === 'android' && Platform.Version >= 31) {
+  if (
+    Platform.OS === 'android' &&
+    Platform.Version >= 31 &&
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN &&
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
+  ) {
     // Android 12 and above
     const bluetoothScanGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
