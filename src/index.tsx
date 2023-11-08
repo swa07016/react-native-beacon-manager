@@ -1,9 +1,4 @@
-import {
-  NativeModules,
-  Permission,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import { NativeModules, PermissionsAndroid, Platform } from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-beacon-manager' doesn't seem to be linked. Make sure: \n\n` +
@@ -50,7 +45,7 @@ export function init(): Promise<any> {
 export async function requestLocationPermission() {
   if (Platform.OS === 'android' && Platform.Version >= 23) {
     const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION as Permission,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
         title: 'Location Permission',
         message: 'This app needs access to your location.',
@@ -68,7 +63,7 @@ export async function requestBluetoothPermission() {
   if (Platform.OS === 'android' && Platform.Version >= 31) {
     // Android 12 and above
     const bluetoothScanGranted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN as Permission,
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
       {
         title: 'Bluetooth Scan Permission',
         message: 'This app needs permission to scan for Bluetooth devices.',
@@ -79,7 +74,7 @@ export async function requestBluetoothPermission() {
     );
 
     const bluetoothConnectGranted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT as Permission,
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       {
         title: 'Bluetooth Connect Permission',
         message: 'This app needs permission to connect to Bluetooth devices.',
